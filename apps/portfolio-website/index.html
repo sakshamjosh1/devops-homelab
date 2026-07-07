@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>saksham._ · devops & cloud</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg:       #0a0c0f;
+      --bg-card:  #0d1117;
+      --bg-term:  #060809;
+      --border:   #1e2530;
+      --border-h: #2d3f50;
+      --text:     #c8d3e0;
+      --muted:    #78909c;
+      --dim:      #4a6070;
+      --green:    #64ffda;
+      --blue:     #4fc3f7;
+      --amber:    #ffb74d;
+      --red:      #ef5350;
+      --purple:   #ba68c8;
+      --h0: #131920;
+      --h1: #0e3d2a;
+      --h2: #1a6b40;
+      --h3: #2ea860;
+      --h4: #64ffda;
+      --font: 'JetBrains Mono', 'Courier New', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 0 24px;
+      height: 40px;
+      background: #0b0e13;
+      border-bottom: 1px solid var(--border);
+      gap: 12px;
+    }
+    .logo { color: var(--blue); font-weight: 700; font-size: 13px; white-space: nowrap; }
+    .logo span { color: var(--green); }
+    .nav { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; }
+    .nav::-webkit-scrollbar { display: none; }
+    .nav a {
+      color: var(--dim); font-size: 11px; padding: 4px 8px;
+      white-space: nowrap; transition: color .15s; border-radius: 2px;
+    }
+    .nav a:hover { color: var(--green); }
+    .topbar-right { display: flex; align-items: center; gap: 10px; font-size: 11px; color: var(--dim); white-space: nowrap; flex-shrink: 0; }
+    .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+    /* ── STATS BAR ── */
+    .statsbar {
+      display: flex; gap: 0;
+      background: #0b0e13;
+      border-bottom: 1px solid var(--border);
+      overflow-x: auto; scrollbar-width: none;
+      font-size: 11px;
+    }
+    .statsbar::-webkit-scrollbar { display: none; }
+    .stat {
+      padding: 6px 20px; color: var(--dim);
+      border-right: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    .stat b { color: var(--blue); font-weight: 500; }
+
+    /* ── PAGE ── */
+    .page { padding: 36px 24px 0; max-width: 1080px; margin: 0 auto; }
+    .crumb { font-size: 11px; color: var(--dim); margin-bottom: 32px; }
+
+    /* ── HERO ── */
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr 260px;
+      gap: 32px;
+      margin-bottom: 56px;
+      align-items: start;
+    }
+    @media (max-width: 720px) {
+      .hero { grid-template-columns: 1fr; }
+      .info-card { order: -1; }
+    }
+
+    /* Name rendered as styled text — no ASCII art breakage */
+    .hero-name {
+      font-size: clamp(36px, 6vw, 64px);
+      font-weight: 700;
+      color: transparent;
+      -webkit-text-stroke: 1.5px var(--green);
+      letter-spacing: .04em;
+      line-height: 1.1;
+      margin-bottom: 10px;
+      font-family: var(--font);
+      /* optional scanline feel */
+      text-shadow: 0 0 40px rgba(100,255,218,.08);
+    }
+
+    .tagline { font-size: 11px; color: var(--muted); margin-bottom: 22px; letter-spacing: .02em; }
+
+    .hero-desc { font-size: 12.5px; color: #90a4ae; line-height: 1.9; max-width: 520px; }
+    .hero-desc .hl { color: var(--blue); }
+
+    /* ── INFO CARD ── */
+    .info-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 0;
+      font-size: 12px;
+    }
+    .irow {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 8px 16px;
+      border-bottom: 1px solid #0f151c;
+      gap: 12px;
+    }
+    .irow:last-child { border-bottom: none; }
+    .ikey { color: var(--dim); flex-shrink: 0; font-size: 11px; }
+    .ival { color: var(--text); text-align: right; font-size: 11px; }
+    .ival.green { color: var(--green); }
+    .ival.blue  { color: var(--blue); }
+    .ival.amber { color: var(--amber); }
+    .ival a { color: inherit; }
+    .ival a:hover { color: var(--green); }
+    .idivider { border: none; border-top: 1px solid var(--border); }
+
+    /* ── SECTION HEADER ── */
+    .sh {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 16px; font-size: 12px;
+    }
+    .sh .idx   { color: var(--blue); font-weight: 500; }
+    .sh .sl    { color: var(--border); }
+    .sh .title { color: #90a4ae; }
+    .sh .src   { margin-left: auto; font-size: 11px; color: var(--dim); }
+    .sh .src a { color: var(--dim); }
+    .sh .src a:hover { color: var(--green); }
+
+    /* ── PROJECT GRID ── */
+    .proj-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 10px;
+      margin-bottom: 48px;
+    }
+    .card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      padding: 16px; transition: border-color .2s;
+    }
+    .card:hover { border-color: var(--border-h); }
+    .card-head { font-size: 12px; color: var(--blue); margin-bottom: 8px; }
+    .card-head .pre { color: var(--dim); }
+    .card-head a { color: var(--blue); }
+    .card-head a:hover { color: var(--green); }
+    .card-body { font-size: 11px; color: var(--muted); line-height: 1.75; }
+    .tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 10px; }
+    .tag {
+      font-size: 10px; padding: 1px 7px;
+      background: #0f151c; border: 1px solid var(--border); color: var(--green);
+    }
+    .tag.aws  { color: var(--amber); }
+    .tag.k8s  { color: var(--blue); }
+    .tag.gray { color: var(--dim); }
+
+    /* ── STACK ── */
+    .stack-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 6px; margin-bottom: 48px;
+    }
+    .sitem {
+      background: var(--bg-card); border: 1px solid var(--border);
+      padding: 9px 12px; display: flex; align-items: center; gap: 9px;
+      font-size: 11px; color: #90a4ae; transition: border-color .2s;
+    }
+    .sitem:hover { border-color: var(--border-h); }
+    .sdot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+    .dg { background: var(--green); }
+    .db { background: var(--blue); }
+    .da { background: var(--amber); }
+    .dr { background: var(--red); }
+    .dp { background: var(--purple); }
+
+    /* ── TERMINAL ── */
+    .term {
+      background: var(--bg-term); border: 1px solid var(--border);
+      padding: 16px; margin-bottom: 48px; overflow-x: auto;
+    }
+    .term-hdr {
+      font-size: 10px; color: var(--dim);
+      display: flex; gap: 8px; margin-bottom: 12px;
+    }
+    .term-hdr .r { margin-left: auto; }
+    .tl { margin-bottom: 3px; white-space: nowrap; }
+    .p  { color: var(--green); }
+    .c  { color: var(--text); }
+    .o  { color: var(--muted); padding-left: 16px; }
+    .ok { color: var(--green); }
+    .wn { color: var(--amber); }
+    .sp { height: 8px; }
+    .cur {
+      display: inline-block; width: 7px; height: 13px;
+      background: var(--green); vertical-align: middle;
+      animation: blink 1s step-start infinite;
+    }
+    @keyframes blink { 0%,49%{opacity:1} 50%,100%{opacity:0} }
+
+    /* ── HEATMAP ── */
+    .hm-wrap {
+      background: var(--bg-card); border: 1px solid var(--border);
+      padding: 16px; margin-bottom: 48px;
+    }
+    .hm-top {
+      display: flex; justify-content: space-between; align-items: baseline;
+      margin-bottom: 14px; flex-wrap: wrap; gap: 8px;
+    }
+    .hm-count { font-size: 26px; font-weight: 700; color: var(--green); font-variant-numeric: tabular-nums; }
+    .hm-sub   { font-size: 11px; color: var(--muted); margin-left: 6px; }
+    .hm-streak { font-size: 11px; color: var(--dim); }
+    #hm {
+      display: grid;
+      grid-template-rows: repeat(7, 10px);
+      grid-auto-flow: column;
+      gap: 2px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+    .hc {
+      width: 10px; height: 10px; border-radius: 2px;
+      background: var(--h0); cursor: default;
+    }
+    .hc[data-l="1"] { background: var(--h1); }
+    .hc[data-l="2"] { background: var(--h2); }
+    .hc[data-l="3"] { background: var(--h3); }
+    .hc[data-l="4"] { background: var(--h4); }
+    .hm-foot {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-top: 8px; font-size: 10px; color: var(--dim); flex-wrap: wrap; gap: 6px;
+    }
+    .legend { display: flex; align-items: center; gap: 3px; }
+    .lc { width: 10px; height: 10px; border-radius: 2px; }
+    .hm-msg { font-size: 11px; color: var(--dim); padding: 20px 0; }
+
+    /* ── CERTS ── */
+    .cert-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 48px; }
+    .cert {
+      background: var(--bg-card); border: 1px solid rgba(255,183,77,.18);
+      padding: 10px 14px; display: flex; align-items: center; gap: 10px;
+      font-size: 11px; color: var(--muted); transition: border-color .2s;
+    }
+    .cert:hover { border-color: rgba(255,183,77,.4); }
+    .cert-icon {
+      width: 26px; height: 26px; border: 1px solid var(--amber);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 9px; color: var(--amber); font-weight: 700; flex-shrink: 0;
+    }
+    .cert-lbl b { display: block; color: var(--text); font-weight: 500; font-size: 11px; margin-bottom: 1px; }
+
+    /* ── CONTACT ── */
+    .contact-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 48px; }
+    .clink {
+      background: var(--bg-card); border: 1px solid var(--border);
+      padding: 9px 14px; font-size: 11px; color: var(--muted);
+      display: flex; align-items: center; gap: 7px;
+      transition: border-color .2s, color .2s;
+    }
+    .clink:hover { border-color: var(--green); color: var(--green); }
+    .clink .pre { color: var(--dim); }
+
+    /* ── DATA SOURCES ── */
+    .ds-wrap {
+      border-top: 1px solid var(--border);
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 24px 48px; padding: 28px 24px 0;
+      max-width: 1080px; margin: 0 auto;
+      font-size: 11px;
+    }
+    @media (max-width: 640px) { .ds-wrap { grid-template-columns: 1fr; } .colo { text-align: left !important; } }
+    .ds-hdr { color: var(--dim); margin-bottom: 12px; font-size: 10px; letter-spacing: .06em; text-transform: uppercase; }
+    .ds-table { width: 100%; border-collapse: collapse; }
+    .ds-table tr { border-bottom: 1px solid #0f151c; }
+    .ds-table tr:last-child { border-bottom: none; }
+    .ds-table td { padding: 5px 0; vertical-align: top; font-size: 11px; }
+    .dk { color: var(--green); padding-right: 14px; white-space: nowrap; }
+    .dv { color: var(--dim); }
+    .dv em { color: var(--muted); font-style: normal; }
+    .colo { text-align: right; }
+    .colo p { color: var(--dim); line-height: 2; }
+    .colo .acc { color: var(--green); }
+
+    /* ── FOOTER ── */
+    .foot {
+      padding: 12px 24px; margin-top: 28px;
+      border-top: 1px solid var(--border);
+      font-size: 10px; color: #2d3f50;
+      display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px;
+    }
+
+    /* ── MOBILE NAV HIDE ── */
+    @media (max-width: 520px) {
+      .nav { display: none; }
+      .topbar-right span:last-child { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div style="display:flex;align-items:center;gap:24px;min-width:0;overflow:hidden">
+    <span class="logo">saksham<span>._</span></span>
+    <nav class="nav">
+      <a href="#projects">~/projects</a>
+      <a href="#stack">~/stack</a>
+      <a href="#now">~/now</a>
+      <a href="#activity">~/activity</a>
+      <a href="#certs">~/certs</a>
+      <a href="#contact">~/contact</a>
+    </nav>
+  </div>
+  <div class="topbar-right">
+    <span class="dot"></span>
+    <span>online</span>
+    <span style="color:var(--border)">|</span>
+    <span id="clock">--:--</span>
+    <span style="color:var(--border)">|</span>
+    <span>IST +5:30</span>
+  </div>
+</header>
+
+<!-- STATS BAR -->
+<div class="statsbar">
+  <div class="stat">learning streak <b>day 69</b></div>
+  <div class="stat">clusters <b>2</b></div>
+  <div class="stat">pipelines <b>12</b></div>
+  <div class="stat">containers <b>40+</b></div>
+  <div class="stat" style="border-right:none">last commit <b>today</b></div>
+</div>
+
+<!-- PAGE -->
+<div class="page">
+  <div class="crumb">~/user.current</div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div>
+      <div class="hero-name">saksham.</div>
+      <div class="tagline"># devops engineer · cloud infrastructure · india</div>
+      <p class="hero-desc">
+        CS engineer building production infrastructure on the cloud.
+        I work with <span class="hl">Kubernetes</span>, <span class="hl">AWS</span>, and
+        <span class="hl">CI/CD pipelines</span> — the invisible layer that makes software actually run.
+        Currently working through KodeKloud's 100 Days of DevOps and
+        building a local AI inference stack on Minikube.
+        I care about understanding the <em>why</em>, not just copying commands.
+      </p>
+    </div>
+
+    <div class="info-card">
+      <div class="irow"><span class="ikey">status</span><span class="ival green">● learning</span></div>
+      <div class="irow"><span class="ikey">location</span><span class="ival">Dehradun, IN</span></div>
+      <div class="irow"><span class="ikey">timezone</span><span class="ival">asia/kolkata</span></div>
+      <div class="irow"><span class="ikey">course</span><span class="ival blue">100 days devops</span></div>
+      <hr class="idivider" />
+      <div class="irow"><span class="ikey">cloud</span><span class="ival amber">AWS</span></div>
+      <div class="irow"><span class="ikey">containers</span><span class="ival">docker · k8s</span></div>
+      <div class="irow"><span class="ikey">IaC</span><span class="ival">terraform</span></div>
+      <div class="irow"><span class="ikey">runtime</span><span class="ival">linux</span></div>
+      <hr class="idivider" />
+      <div class="irow"><span class="ikey">github</span><span class="ival blue"><a href="https://github.com/sakshamjosh1" target="_blank">@sakshamjosh1</a></span></div>
+      <div class="irow"><span class="ikey">linkedin</span><span class="ival blue"><a href="https://linkedin.com/in/YOUR_HANDLE" target="_blank">/in/YOUR_HANDLE</a></span></div>
+    </div>
+  </section>
+
+  <!-- 01 PROJECTS -->
+  <section id="projects">
+    <div class="sh">
+      <span class="idx">01</span><span class="sl">//</span><span class="title">projects</span>
+      <span class="src"><a href="https://github.com/sakshamjosh1" target="_blank">src: github.com/sakshamjosh1</a></span>
+    </div>
+    <!--
+      TODO: Replace each card with a real GitHub repo.
+        - Change href to your actual repo URL
+        - Change the title text
+        - Write 2-3 honest sentences about what you built
+        - Update the tags to match what you actually used
+      Delete unused cards. Copy a block to add more.
+    -->
+    <div class="proj-grid">
+
+      <div class="card">
+        <div class="card-head"><span class="pre">~/ </span><a href="https://github.com/sakshamjosh1/REPO" target="_blank">your-project-1</a></div>
+        <div class="card-body">Replace with a real project. What did you build? What problem did it solve? What did you learn from it?</div>
+        <div class="tags"><span class="tag">tool</span><span class="tag k8s">k8s</span><span class="tag aws">AWS</span></div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><span class="pre">~/ </span><a href="https://github.com/sakshamjosh1/REPO" target="_blank">your-project-2</a></div>
+        <div class="card-body">Replace with a real project. What did you build? What problem did it solve? What did you learn from it?</div>
+        <div class="tags"><span class="tag">tool</span><span class="tag">tool</span></div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><span class="pre">~/ </span><a href="https://github.com/sakshamjosh1/REPO" target="_blank">your-project-3</a></div>
+        <div class="card-body">Replace with a real project. What did you build? What problem did it solve? What did you learn from it?</div>
+        <div class="tags"><span class="tag">tool</span><span class="tag gray">WIP</span></div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><span class="pre">~/ </span><a href="https://github.com/sakshamjosh1/REPO" target="_blank">your-project-4</a></div>
+        <div class="card-body">Replace with a real project. What did you build? What problem did it solve? What did you learn from it?</div>
+        <div class="tags"><span class="tag">tool</span><span class="tag">tool</span></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 02 STACK -->
+  <section id="stack">
+    <div class="sh"><span class="idx">02</span><span class="sl">//</span><span class="title">stack</span></div>
+    <div class="stack-grid">
+      <div class="sitem"><span class="sdot da"></span>AWS</div>
+      <div class="sitem"><span class="sdot db"></span>Kubernetes</div>
+      <div class="sitem"><span class="sdot db"></span>Docker</div>
+      <div class="sitem"><span class="sdot dg"></span>Terraform</div>
+      <div class="sitem"><span class="sdot dg"></span>Linux</div>
+      <div class="sitem"><span class="sdot dr"></span>Prometheus</div>
+      <div class="sitem"><span class="sdot da"></span>Grafana</div>
+      <div class="sitem"><span class="sdot dp"></span>Python</div>
+      <div class="sitem"><span class="sdot db"></span>GitHub Actions</div>
+      <div class="sitem"><span class="sdot dg"></span>Bash</div>
+      <div class="sitem"><span class="sdot db"></span>KEDA</div>
+      <div class="sitem"><span class="sdot dr"></span>Redis</div>
+    </div>
+  </section>
+
+  <!-- 03 NOW -->
+  <section id="now">
+    <div class="sh"><span class="idx">03</span><span class="sl">//</span><span class="title">live · now</span></div>
+    <div class="term">
+      <div class="term-hdr"><span>● bash</span><span class="r">~/saksham</span></div>
+      <div class="tl"><span class="p">$</span> <span class="c">kubectl get pods -n inference</span></div>
+      <div class="tl o">NAME&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;READY&nbsp;&nbsp; STATUS</div>
+      <div class="tl o">fastapi-deploy-7d4b9c8f&nbsp;&nbsp; 1/1&nbsp;&nbsp;&nbsp;&nbsp; <span class="ok">Running</span></div>
+      <div class="tl o">ollama-svc-6c2f1a3b&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1/1&nbsp;&nbsp;&nbsp;&nbsp; <span class="ok">Running</span></div>
+      <div class="tl o">redis-cache-8xp2k9n1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1/1&nbsp;&nbsp;&nbsp;&nbsp; <span class="ok">Running</span></div>
+      <div class="sp"></div>
+      <div class="tl"><span class="p">$</span> <span class="c">aws ecs describe-services --cluster prod --services api</span></div>
+      <div class="tl o">status: <span class="ok">ACTIVE</span> &nbsp;·&nbsp; running: <span class="ok">2/2</span> tasks &nbsp;·&nbsp; deployment: <span class="ok">PRIMARY · completed</span></div>
+      <div class="sp"></div>
+      <div class="tl"><span class="p">$</span> <span class="c">tail -5 ~/.kodekloud/progress.log</span></div>
+      <div class="tl o">[day 66] k8s Deployments — rolling updates&nbsp;&nbsp;&nbsp;&nbsp; ✓</div>
+      <div class="tl o">[day 67] k8s Services — ClusterIP, NodePort&nbsp;&nbsp;&nbsp; ✓</div>
+      <div class="tl o">[day 68] k8s Services — LoadBalancer&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ✓</div>
+      <div class="tl o">[day 69] k8s Ingress + TLS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="wn">in progress...</span></div>
+      <div class="sp"></div>
+      <div class="tl"><span class="p">$</span> <span class="cur"></span></div>
+    </div>
+  </section>
+
+  <!-- 04 ACTIVITY -->
+  <section id="activity">
+    <div class="sh">
+      <span class="idx">04</span><span class="sl">//</span><span class="title">git.activity --year</span>
+      <span class="src"><a href="https://github.com/sakshamjosh1" target="_blank">// github.com/sakshamjosh1/events</a></span>
+    </div>
+    <div class="hm-wrap">
+      <div class="hm-top">
+        <div>
+          <span class="hm-count" id="hm-total">—</span>
+          <span class="hm-sub">contributions · past 365 days</span>
+        </div>
+        <span class="hm-streak" id="hm-streak"></span>
+      </div>
+      <div id="hm"><div class="hm-msg">fetching github activity...</div></div>
+      <div class="hm-foot">
+        <span id="hm-range" style="color:var(--dim)"></span>
+        <div class="legend">
+          <span style="margin-right:4px">less</span>
+          <div class="lc" style="background:var(--h0);border:1px solid var(--border)"></div>
+          <div class="lc" style="background:var(--h1)"></div>
+          <div class="lc" style="background:var(--h2)"></div>
+          <div class="lc" style="background:var(--h3)"></div>
+          <div class="lc" style="background:var(--h4)"></div>
+          <span style="margin-left:4px">more</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 CERTS -->
+  <section id="certs">
+    <div class="sh"><span class="idx">05</span><span class="sl">//</span><span class="title">certs · roadmap</span></div>
+    <div class="cert-row">
+      <div class="cert">
+        <div class="cert-icon">CKA</div>
+        <div class="cert-lbl"><b>Certified Kubernetes Administrator</b>planned · 2025</div>
+      </div>
+      <div class="cert">
+        <div class="cert-icon">SAA</div>
+        <div class="cert-lbl"><b>AWS Solutions Architect Associate</b>planned · 2025</div>
+      </div>
+      <div class="cert">
+        <div class="cert-icon">TF</div>
+        <div class="cert-lbl"><b>HashiCorp Terraform Associate</b>planned · 2025</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 CONTACT -->
+  <section id="contact">
+    <div class="sh"><span class="idx">06</span><span class="sl">//</span><span class="title">contact</span></div>
+    <div class="contact-row">
+      <a class="clink" href="https://github.com/sakshamjosh1" target="_blank">
+        <span class="pre">gh://</span>github.com/sakshamjosh1
+      </a>
+      <a class="clink" href="https://linkedin.com/in/YOUR_HANDLE" target="_blank">
+        <span class="pre">li://</span>linkedin.com/in/YOUR_HANDLE
+      </a>
+      <a class="clink" href="mailto:YOUR_EMAIL">
+        <span class="pre">mail://</span>YOUR_EMAIL
+      </a>
+    </div>
+  </section>
+</div>
+
+<!-- DATA SOURCES -->
+<div class="ds-wrap">
+  <div>
+    <div class="ds-hdr">data sources</div>
+    <table class="ds-table">
+      <tr><td class="dk">github</td><td class="dv">github-contributions-api.jogruber.de · <em>live</em></td></tr>
+      <tr><td class="dk">streak</td><td class="dv">derived from contributions · <em>client-side</em></td></tr>
+      <tr><td class="dk">now</td><td class="dv">static · <em>updated manually</em></td></tr>
+      <tr><td class="dk">clock</td><td class="dv">Date() · <em>browser local · IST +5:30</em></td></tr>
+      <tr><td class="dk">status</td><td class="dv">static · <em>hardcoded</em></td></tr>
+    </table>
+  </div>
+  <div class="colo">
+    <div class="ds-hdr">colophon</div>
+    <p>built with vanilla html · css · js</p>
+    <p>mono by jetbrains · hosted on github pages</p>
+    <p>phosphor accent: <span class="acc">oklch(0.88 0.17 168)</span></p>
+    <p>no frameworks · no build step · no nonsense</p>
+    <p style="margin-top:10px;color:#2d3f50">© 2025 saksham · crafted in mono</p>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="foot">
+  <span>saksham · devops & cloud infrastructure · dehradun, india</span>
+  <span id="uptime">session: 0s</span>
+</div>
+
+<script>
+  // Clock (IST)
+  function tick() {
+    const now = new Date();
+    document.getElementById('clock').textContent =
+      String(now.getHours()).padStart(2,'0') + ':' +
+      String(now.getMinutes()).padStart(2,'0');
+  }
+  tick(); setInterval(tick, 30000);
+
+  // Session uptime
+  const t0 = Date.now();
+  (function loop() {
+    const e = Math.floor((Date.now()-t0)/1000);
+    const m = Math.floor(e/60), s = e%60;
+    document.getElementById('uptime').textContent =
+      'session: '+(m?m+'m ':'')+s+'s';
+    setTimeout(loop, 1000);
+  })();
+
+  // GitHub heatmap
+  (async function() {
+    const USER = 'sakshamjosh1';
+    const el   = document.getElementById('hm');
+
+    let data;
+    try {
+      const r = await fetch(`https://github-contributions-api.jogruber.de/v4/${USER}?y=last`);
+      if (!r.ok) throw 0;
+      data = await r.json();
+    } catch {
+      el.innerHTML = `<div class="hm-msg" style="color:var(--amber)">could not load · <a href="https://github.com/${USER}" style="color:var(--blue)" target="_blank">github.com/${USER}</a></div>`;
+      return;
+    }
+
+    const contribs = data.contributions || [];
+    const total = contribs.reduce((s,d)=>s+d.count, 0);
+    document.getElementById('hm-total').textContent = total.toLocaleString();
+
+    // Build 371-day window
+    const today = new Date();
+    const days = [];
+    for (let i=370; i>=0; i--) {
+      const d = new Date(today);
+      d.setDate(today.getDate()-i);
+      const iso = d.toISOString().split('T')[0];
+      const found = contribs.find(c=>c.date===iso);
+      days.push({ date: iso, count: found?found.count:0, level: found?found.level:0 });
+    }
+
+    // Longest streak
+    let max=0, cur=0;
+    for (const d of days) { cur = d.count>0 ? cur+1 : 0; if(cur>max) max=cur; }
+    document.getElementById('hm-streak').textContent = 'longest streak · '+max+'d';
+
+    // Date range
+    const mn = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+    const fmt = iso => { const [,m,] = iso.split('-'); return mn[+m-1]+' '+iso.split('-')[0]; };
+    document.getElementById('hm-range').textContent = fmt(days[0].date)+' — '+fmt(days[days.length-1].date);
+
+    // Render cells
+    const firstDow = new Date(days[0].date).getDay();
+    el.innerHTML = '';
+    for (let i=0; i<firstDow; i++) {
+      const b = document.createElement('div');
+      b.className = 'hc'; b.style.visibility = 'hidden'; el.appendChild(b);
+    }
+    for (const day of days) {
+      const c = document.createElement('div');
+      c.className = 'hc';
+      c.dataset.l = Math.min(day.level,4);
+      c.title = day.date+' · '+day.count+(day.count===1?' contribution':' contributions');
+      el.appendChild(c);
+    }
+  })();
+</script>
+</body>
+</html>
